@@ -80,6 +80,15 @@ const EMPTY_FILTERS = {
     dueDateTo:     "",
 };
 
+// Hides the browser's native date-format hint (e.g. "éééé. hh. nn.")
+// when the field is empty and not focused. The hint reappears on focus
+// so the user still gets guidance while editing.
+const DATE_INPUT_SX = {
+    "& input[type='date'][value='']:not(:focus)::-webkit-datetime-edit": {
+        color: "transparent",
+    },
+};
+
 function FilterSectionLabel({ children }) {
     return (
         <Typography
@@ -472,8 +481,6 @@ export default function InvoiceList() {
                                             <TableCell sx={{ py: 1.5 }}>
                                                 {inv.storno ? (
                                                     <Chip label="Sztornó" color="error" size="small" />
-                                                ) : inv.paid ? (
-                                                    <Chip label="Fizetve" color="success" size="small" />
                                                 ) : null}
                                             </TableCell>
                                         </TableRow>
@@ -695,6 +702,7 @@ export default function InvoiceList() {
                                     value={filters.issueDateFrom}
                                     onChange={(e) => setFilterField("issueDateFrom", e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={DATE_INPUT_SX}
                                 />
                                 <TextField
                                     label="Ig"
@@ -704,6 +712,7 @@ export default function InvoiceList() {
                                     value={filters.issueDateTo}
                                     onChange={(e) => setFilterField("issueDateTo", e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={DATE_INPUT_SX}
                                 />
                             </Stack>
                         </Box>
@@ -719,6 +728,7 @@ export default function InvoiceList() {
                                     value={filters.dueDateFrom}
                                     onChange={(e) => setFilterField("dueDateFrom", e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={DATE_INPUT_SX}
                                 />
                                 <TextField
                                     label="Ig"
@@ -728,6 +738,7 @@ export default function InvoiceList() {
                                     value={filters.dueDateTo}
                                     onChange={(e) => setFilterField("dueDateTo", e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={DATE_INPUT_SX}
                                 />
                             </Stack>
                         </Box>
