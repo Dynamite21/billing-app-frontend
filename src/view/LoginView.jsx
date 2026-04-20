@@ -5,7 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { Paper, Stack, Typography, TextField, Button, Alert, Link } from "@mui/material";
 
-export default function Login({ onToken }) {
+export default function LoginView({ onToken }) {
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [msg, setMsg] = useState("");

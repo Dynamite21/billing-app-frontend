@@ -69,7 +69,7 @@ function InfoItem({ label, value }) {
     );
 }
 
-/** Uppercase section label, consistent with UserProfile. */
+/** Uppercase section label, consistent with UserProfileView. */
 function SectionLabel({ children }) {
     return (
         <Box sx={{ px: 3, pt: 2.5, pb: 1.5 }}>
@@ -90,7 +90,7 @@ function SectionLabel({ children }) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function InvoiceDetails() {
+export default function InvoiceDetailsView() {
     const { id } = useParams();
     const navigate = useNavigate();
 
