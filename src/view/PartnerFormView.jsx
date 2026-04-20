@@ -59,6 +59,7 @@ export default function PartnerFormView() {
     const [loading, setLoading] = useState(isEdit);
     const [loadError, setLoadError] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState("");
 
     useEffect(() => {
         if (!isEdit) return;
@@ -97,6 +98,7 @@ export default function PartnerFormView() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
+        setSaveError("");
         try {
             const payload = {
                 partnerData: {
@@ -118,6 +120,7 @@ export default function PartnerFormView() {
             navigate("/partners");
         } catch (err) {
             console.error("Mentési hiba:", err);
+            setSaveError("Mentés sikertelen. Kérjük, próbálja újra.");
             setSaving(false);
         }
     };
@@ -302,6 +305,8 @@ export default function PartnerFormView() {
                 </Grid>
 
                 <Divider sx={{ mt: 2.5, mb: 2 }} />
+
+                {saveError && <Alert severity="error" sx={{ mb: 2 }}>{saveError}</Alert>}
 
                 <Stack direction="row" spacing={1}>
                     <Button
