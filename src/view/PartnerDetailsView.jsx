@@ -7,6 +7,10 @@ import {
     Chip,
     CircularProgress,
     Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider,
     Paper,
     Stack,
@@ -67,6 +71,7 @@ export default function PartnerDetailsView() {
     const [partner, setPartner] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -76,12 +81,14 @@ export default function PartnerDetailsView() {
         return () => { cancelled = true; };
     }, [id]);
 
-    const handleDelete = async () => {
+    const handleDeleteConfirm = async () => {
         try {
             await deletePartner(id);
             navigate("/partners");
         } catch (err) {
             console.error("Törlés hiba:", err);
+        } finally {
+            setConfirmOpen(false);
         }
     };
 
@@ -177,7 +184,7 @@ export default function PartnerDetailsView() {
                         color="error"
                         size="small"
                         startIcon={<DeleteIcon />}
-                        onClick={handleDelete}
+                        onClick={() => setConfirmOpen(true)}
                         sx={{ textTransform: "none", borderRadius: 1.5 }}
                     >
                         Törlés
@@ -250,6 +257,28 @@ export default function PartnerDetailsView() {
                     </>
                 )}
             </Paper>
+            <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} maxWidth="xs" fullWidth>
+                <DialogTitle>Törlés megerősítése</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" color="text.secondary">
+                        Biztosan törölni szeretné ezt a partnert? A művelet nem vonható vissza.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+                    <Button onClick={() => setConfirmOpen(false)} sx={{ textTransform: "none" }}>
+                        Mégse
+                    </Button>
+                    <Button
+                        color="error"
+                        variant="contained"
+                        disableElevation
+                        onClick={handleDeleteConfirm}
+                        sx={{ textTransform: "none" }}
+                    >
+                        Törlés
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 }

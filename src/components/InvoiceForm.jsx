@@ -155,6 +155,7 @@ export default function InvoiceForm({ initialData, onClose, onSaved }) {
     const [quickAddOpen, setQuickAddOpen] = useState(false);
     const [newPartner, setNewPartner] = useState(emptyPartnerForm);
     const [savingPartner, setSavingPartner] = useState(false);
+    const [quickAddError, setQuickAddError] = useState("");
 
     const loadPartners = async () => {
         try {
@@ -256,6 +257,7 @@ export default function InvoiceForm({ initialData, onClose, onSaved }) {
 
     const handleQuickAddSave = async () => {
         setSavingPartner(true);
+        setQuickAddError("");
         try {
             await savePartner({
                 partnerData: {
@@ -268,6 +270,7 @@ export default function InvoiceForm({ initialData, onClose, onSaved }) {
             setNewPartner(emptyPartnerForm);
         } catch (err) {
             console.error("Partner mentési hiba:", err);
+            setQuickAddError("Mentés sikertelen. Kérjük, próbálja újra.");
         } finally {
             setSavingPartner(false);
         }
@@ -522,7 +525,7 @@ export default function InvoiceForm({ initialData, onClose, onSaved }) {
                 </Stack>
             </form>
 
-            <Dialog open={quickAddOpen} onClose={() => setQuickAddOpen(false)} maxWidth="sm" fullWidth>
+            <Dialog open={quickAddOpen} onClose={() => { setQuickAddOpen(false); setQuickAddError(""); }} maxWidth="sm" fullWidth>
                 <DialogTitle>Új partner gyors hozzáadása</DialogTitle>
                 <DialogContent>
                     <Stack spacing={2} sx={{ mt: 1 }}>
@@ -605,8 +608,13 @@ export default function InvoiceForm({ initialData, onClose, onSaved }) {
                         )}
                     </Stack>
                 </DialogContent>
+                {quickAddError && (
+                    <Box sx={{ px: 3, pb: 1 }}>
+                        <Alert severity="error">{quickAddError}</Alert>
+                    </Box>
+                )}
                 <DialogActions sx={{ px: 3, pb: 2 }}>
-                    <Button onClick={() => setQuickAddOpen(false)}>Mégse</Button>
+                    <Button onClick={() => { setQuickAddOpen(false); setQuickAddError(""); }}>Mégse</Button>
                     <Button
                         variant="contained"
                         onClick={handleQuickAddSave}
