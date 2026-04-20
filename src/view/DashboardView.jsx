@@ -27,8 +27,6 @@ import {
     getEarliestMonth,
 } from "../utils/invoiceDashboard";
 
-const now = new Date();
-
 const PAYMENT_METHOD_LABEL = {
     CARD: "Bankkártya",
     BANK_TRANSFER: "Átutalás",
@@ -185,6 +183,7 @@ function SectionPanel({ children, sx }) {
 }
 
 export default function DashboardView() {
+    const now = new Date();
     const navigate = useNavigate();
 
     const [invoices, setInvoices] = useState([]);
