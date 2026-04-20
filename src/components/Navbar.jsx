@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
-import SettingsIcon from "@mui/icons-material/Settings";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
@@ -55,13 +54,7 @@ export default function Navbar() {
         navigate("/profile");
     };
 
-    const goToUserSettings = () => {
-        handleMenuClose();
-        // később implementáljuk (route, page, stb.)
-        // navigate("/user-settings");
-    };
-
-    const isActive = (path) => location.pathname.startsWith(path);
+const isActive = (path) => location.pathname.startsWith(path);
 
     const navBtnSx = (path) => ({
         height: NAV_HEIGHT,
@@ -241,18 +234,6 @@ export default function Navbar() {
                                         </Typography>
                                     </MenuItem>
 
-                                    <MenuItem
-                                        onClick={goToUserSettings}
-                                        disabled
-                                        sx={{ borderRadius: 1.5, py: 1, px: 1.5, gap: 1.5 }}
-                                    >
-                                        <ListItemIcon sx={{ minWidth: "unset" }}>
-                                            <SettingsIcon sx={{ fontSize: 18 }} />
-                                        </ListItemIcon>
-                                        <Typography variant="body2" fontWeight={500}>
-                                            Beállítások
-                                        </Typography>
-                                    </MenuItem>
                                 </Box>
 
                                 <Divider />
