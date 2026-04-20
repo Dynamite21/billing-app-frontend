@@ -4,17 +4,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navbar from "./components/Navbar";
 import InvoicesView from "./view/InvoicesView";
 import PartnersView from "./view/PartnersView";
-import InvoiceDetails from "./components/InvoiceDetails";
-import InvoiceCreateView from "./components/InvoiceCreateView";
-import Login from "./login/Login";
+import InvoiceDetailsView from "./view/InvoiceDetailsView";
+import InvoiceCreateView from "./view/InvoiceCreateView";
+import LoginView from "./view/LoginView";
 
-import RegistrationForm from "./components/RegistrationForm";
+import RegistrationFormView from "./view/RegistrationFormView";
 
 import FlashSnackbar from "./components/FlashSnackbar";
 
 import { AuthProvider } from "./auth/AuthProvider";
 import RequireAuth from "./auth/RequireAuth";
-import UserProfile from "./components/UserProfile";
+import UserProfileView from "./view/UserProfileView";
 import DashboardView from "./view/DashboardView";
 import PartnerDetailsView from "./view/PartnerDetailsView";
 import PartnerFormView from "./view/PartnerForm";
@@ -31,9 +31,9 @@ export default function App() {
                     <Routes>
                         <Route path="/" element={<Navigate to="/invoices" replace />} />
 
-                        <Route path="/login" element={<Login />} />
+                        <Route path="/login" element={<LoginView />} />
 
-                        <Route path="/register" element={<RegistrationForm />} />
+                        <Route path="/register" element={<RegistrationFormView />} />
 
                         <Route
                             path="/invoices"
@@ -93,7 +93,7 @@ export default function App() {
                             path="/invoices/:id"
                             element={
                                 <RequireAuth>
-                                    <InvoiceDetails />
+                                    <InvoiceDetailsView />
                                 </RequireAuth>
                             }
                         />
@@ -111,7 +111,7 @@ export default function App() {
                             path="/profile"
                             element={
                                 <RequireAuth>
-                                    <UserProfile />
+                                    <UserProfileView />
                                 </RequireAuth>
                             }
                         />

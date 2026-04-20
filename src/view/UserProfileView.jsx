@@ -119,7 +119,7 @@ function EditableField({ label, value, onChange, isEditing, sx: sxProp, slotProp
 }
 
 
-export default function UserProfile() {
+export default function UserProfileView() {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState("");

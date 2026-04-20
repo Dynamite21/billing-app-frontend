@@ -104,7 +104,7 @@ function SectionLabel({ children }) {
     );
 }
 
-export default function RegistrationForm({ onToken }) {
+export default function RegistrationFormView({ onToken }) {
     const navigate = useNavigate();
 
     const [error, setError] = useState("");
