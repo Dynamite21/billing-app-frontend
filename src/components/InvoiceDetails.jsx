@@ -42,8 +42,7 @@ const PAYMENT_METHOD_LABEL = {
 
 function StatusChip({ invoice }) {
     if (invoice.storno) return <Chip label="Stornó" color="error" size="small" />;
-    if (invoice.paid) return <Chip label="Fizetve" color="success" size="small" />;
-    return <Chip label="Nyitott" size="small" variant="outlined" />;
+    return null;
 }
 
 /** Two-line info item used in the general info section. */

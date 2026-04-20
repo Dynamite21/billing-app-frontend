@@ -5,6 +5,8 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    TableContainer,
+    TablePagination,
     Button,
     Dialog,
     DialogActions,
@@ -46,6 +48,9 @@ export default function PartnerList() {
     const [typeFilter, setTypeFilter] = useState("all");
     const [confirmId, setConfirmId] = useState(null);
 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
     useEffect(() => {
         loadData();
     }, []);
@@ -86,6 +91,13 @@ export default function PartnerList() {
         return true;
     });
 
+    const pagedPartners = filteredPartners.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+    const handleSearchChange = (e) => { setSearch(e.target.value); setPage(0); };
+    const handleTypeFilterChange = (value) => { setTypeFilter(value); setPage(0); };
+    const handleChangePage = (_, newPage) => setPage(newPage);
+    const handleChangeRowsPerPage = (e) => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0); };
+
     if (loading) {
         return (
             <Box sx={{ px: 2.5, py: 3 }}>
@@ -115,7 +127,7 @@ export default function PartnerList() {
                     size="small"
                     placeholder="Keresés"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={handleSearchChange}
                     autoComplete="off"
                     sx={{ flex: 1, minWidth: 160 }}
                     slotProps={{
@@ -138,7 +150,7 @@ export default function PartnerList() {
                             clickable
                             variant={typeFilter === value ? "filled" : "outlined"}
                             color={typeFilter === value ? "primary" : "default"}
-                            onClick={() => setTypeFilter(value)}
+                            onClick={() => handleTypeFilterChange(value)}
                         />
                     ))}
                 </Stack>
@@ -165,6 +177,7 @@ export default function PartnerList() {
 
             <Divider />
 
+            <TableContainer>
             <Table>
                 <TableHead>
                     <TableRow sx={{ bgcolor: "grey.50" }}>
@@ -200,7 +213,7 @@ export default function PartnerList() {
                             </TableCell>
                         </TableRow>
                     ) : (
-                        filteredPartners.map((p) => {
+                        pagedPartners.map((p) => {
                             const d = p.partnerData ?? {};
                             const isCompany = Boolean(d.isCompany);
 
@@ -280,6 +293,22 @@ export default function PartnerList() {
                     )}
                 </TableBody>
             </Table>
+            </TableContainer>
+
+            <Divider />
+            <TablePagination
+                component="div"
+                count={filteredPartners.length}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[10, 20, 50]}
+                labelRowsPerPage="Sorok száma:"
+                labelDisplayedRows={({ from, to, count }) =>
+                    `${from}–${to} / ${count !== -1 ? count : `több mint ${to}`}`
+                }
+            />
 
             <Dialog open={Boolean(confirmId)} onClose={() => setConfirmId(null)} maxWidth="xs" fullWidth>
                 <DialogTitle>Törlés megerősítése</DialogTitle>

@@ -83,6 +83,15 @@ const EMPTY_FILTERS = {
     dueDateTo:     "",
 };
 
+// Hides the browser's native date-format hint (e.g. "éééé. hh. nn.")
+// when the field is empty and not focused. The hint reappears on focus
+// so the user still gets guidance while editing.
+const DATE_INPUT_SX = {
+    "& input[type='date'][value='']:not(:focus)::-webkit-datetime-edit": {
+        color: "transparent",
+    },
+};
+
 function FilterSectionLabel({ children }) {
     return (
         <Typography
@@ -109,7 +118,7 @@ export default function InvoiceList() {
     const [error, setError] = useState(null);
 
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [sortOption, setSortOption] = useState("date_desc");
 
     const [search, setSearch] = useState("");
@@ -133,6 +142,8 @@ export default function InvoiceList() {
         }
         return true;
     });
+
+    const pagedInvoices = displayedInvoices.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     const [selectedId, setSelectedId] = useState(null);
     const [previewOpen, setPreviewOpen] = useState(false);
@@ -196,8 +207,6 @@ export default function InvoiceList() {
                                     : nameB.localeCompare(nameA, "hu");
                             });
                         }
-                        const start = page * rowsPerPage;
-                        content = content.slice(start, start + rowsPerPage);
                     }
                     setInvoices(content);
                     setTotalElements(data.totalElements || 0);
@@ -270,7 +279,7 @@ export default function InvoiceList() {
                         size="small"
                         placeholder="Keresés"
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => { setSearch(e.target.value); setPage(0); }}
                         autoComplete="off"
                         sx={{ flex: 1, minWidth: 180 }}
                         slotProps={{
@@ -400,7 +409,7 @@ export default function InvoiceList() {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                displayedInvoices.map((inv) => {
+                                pagedInvoices.map((inv) => {
                                     const netto = calcInvoiceNet(inv);
                                     const brutto = calcInvoiceGross(inv);
                                     const isSelected = selectedId === inv.id && previewOpen;
@@ -476,8 +485,6 @@ export default function InvoiceList() {
                                             <TableCell sx={{ py: 1.5 }}>
                                                 {inv.storno ? (
                                                     <Chip label="Sztornó" color="error" size="small" />
-                                                ) : inv.paid ? (
-                                                    <Chip label="Fizetve" color="success" size="small" />
                                                 ) : null}
                                             </TableCell>
 
@@ -505,10 +512,9 @@ export default function InvoiceList() {
                 </TableContainer>
 
                 <Divider />
-
                 <TablePagination
                     component="div"
-                    count={totalElements}
+                    count={displayedInvoices.length}
                     page={page}
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}
@@ -598,7 +604,7 @@ export default function InvoiceList() {
                             <Box sx={{ px: 0.75 }}>
                                 <Slider
                                     value={amountRange}
-                                    onChange={(_, v) => setAmountRange(v)}
+                                    onChange={(_, v) => { setAmountRange(v); setPage(0); }}
                                     min={0}
                                     max={AMOUNT_MAX}
                                     step={50_000}
@@ -624,6 +630,7 @@ export default function InvoiceList() {
                                         const raw = e.target.value.replace(/[\s\u00A0]/g, "");
                                         const v = Math.max(0, Number(raw) || 0);
                                         setAmountRange([Math.min(v, amountRange[1]), amountRange[1]]);
+                                        setPage(0);
                                     }}
                                     inputProps={{ inputMode: "numeric" }}
                                 />
@@ -640,6 +647,7 @@ export default function InvoiceList() {
                                             ? Math.min(AMOUNT_MAX, Math.max(amountRange[0], Number(raw)))
                                             : AMOUNT_MAX;
                                         setAmountRange([amountRange[0], v]);
+                                        setPage(0);
                                     }}
                                     inputProps={{ inputMode: "numeric" }}
                                 />
@@ -715,6 +723,7 @@ export default function InvoiceList() {
                                     value={filters.issueDateFrom}
                                     onChange={(e) => setFilterField("issueDateFrom", e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={DATE_INPUT_SX}
                                 />
                                 <TextField
                                     label="Ig"
@@ -724,6 +733,7 @@ export default function InvoiceList() {
                                     value={filters.issueDateTo}
                                     onChange={(e) => setFilterField("issueDateTo", e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={DATE_INPUT_SX}
                                 />
                             </Stack>
                         </Box>
@@ -739,6 +749,7 @@ export default function InvoiceList() {
                                     value={filters.dueDateFrom}
                                     onChange={(e) => setFilterField("dueDateFrom", e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={DATE_INPUT_SX}
                                 />
                                 <TextField
                                     label="Ig"
@@ -748,6 +759,7 @@ export default function InvoiceList() {
                                     value={filters.dueDateTo}
                                     onChange={(e) => setFilterField("dueDateTo", e.target.value)}
                                     InputLabelProps={{ shrink: true }}
+                                    sx={DATE_INPUT_SX}
                                 />
                             </Stack>
                         </Box>
