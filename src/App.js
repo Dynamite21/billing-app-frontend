@@ -17,7 +17,7 @@ import RequireAuth from "./auth/RequireAuth";
 import UserProfileView from "./view/UserProfileView";
 import DashboardView from "./view/DashboardView";
 import PartnerDetailsView from "./view/PartnerDetailsView";
-import PartnerFormView from "./view/PartnerForm";
+import PartnerFormView from "./view/PartnerFormView";
 
 const queryClient = new QueryClient();
 
