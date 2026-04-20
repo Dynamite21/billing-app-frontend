@@ -6,6 +6,7 @@ import {
     Chip,
     CircularProgress,
     Divider,
+    IconButton,
     InputAdornment,
     MenuItem,
     Paper,
@@ -20,6 +21,7 @@ import {
     TablePagination,
     TableRow,
     TextField,
+    Tooltip,
     Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -27,6 +29,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import SearchIcon from "@mui/icons-material/Search";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { listInvoices } from "../services/invoices";
 import { calcInvoiceGross, calcInvoiceNet } from "../utils/invoiceDashboard";
@@ -374,6 +377,7 @@ export default function InvoiceList() {
                                     { label: "Nettó",  align: "right" },
                                     { label: "Bruttó", align: "right" },
                                     { label: "Állapot" },
+                                    { label: "" },
                                 ].map(({ label, align }) => (
                                     <TableCell
                                         key={label}
@@ -395,7 +399,7 @@ export default function InvoiceList() {
                         <TableBody>
                             {displayedInvoices.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={7}>
+                                    <TableCell colSpan={8}>
                                         <Stack alignItems="center" spacing={1.25} sx={{ py: 7 }}>
                                             <ReceiptLongIcon sx={{ fontSize: 40, color: "text.disabled" }} />
                                             <Typography color="text.secondary" variant="body2">
@@ -414,7 +418,7 @@ export default function InvoiceList() {
                                         <TableRow
                                             key={inv.id}
                                             hover
-                                            onClick={() => { setSelectedId(inv.id); setPreviewOpen(true); }}
+                                            onClick={() => navigate(`/invoices/${inv.id}`)}
                                             sx={{
                                                 cursor: "pointer",
                                                 bgcolor: isSelected
@@ -482,6 +486,22 @@ export default function InvoiceList() {
                                                 {inv.storno ? (
                                                     <Chip label="Sztornó" color="error" size="small" />
                                                 ) : null}
+                                            </TableCell>
+
+                                            <TableCell sx={{ py: 1.5, pr: 1.5, width: 36 }}>
+                                                <Tooltip title="Gyors előnézet" placement="left">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedId(inv.id);
+                                                            setPreviewOpen(true);
+                                                        }}
+                                                        sx={{ color: "action.active", "&:hover": { color: "primary.main" } }}
+                                                    >
+                                                        <VisibilityIcon sx={{ fontSize: 17 }} />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
                                     );

@@ -4,8 +4,9 @@ import {
     Button,
     Chip,
     CircularProgress,
+    Dialog,
+    DialogContent,
     Divider,
-    Drawer,
     IconButton,
     Stack,
     Table,
@@ -22,8 +23,6 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { downloadInvoice, getInvoice } from "../services/invoices";
 import { calcInvoiceGross, calcInvoiceNet, calcLineNet } from "../utils/invoiceDashboard";
 
-const DRAWER_WIDTH = 500;
-
 const PAYMENT_METHOD_LABEL = {
     CARD: "Bankkártya",
     BANK_TRANSFER: "Átutalás",
@@ -39,53 +38,22 @@ function StatusChip({ invoice }) {
     return null;
 }
 
-function InfoRow({ label, value }) {
-    return (
-        <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="baseline"
-            sx={{
-                py: 0.875,
-                "&:not(:last-child)": { borderBottom: "1px solid", borderColor: "divider" },
-            }}
-        >
-            <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ flexShrink: 0, mr: 2, fontSize: "0.8rem" }}
-            >
-                {label}
-            </Typography>
-            <Typography
-                variant="body2"
-                fontWeight={500}
-                sx={{ fontSize: "0.875rem", textAlign: "right", wordBreak: "break-word" }}
-            >
-                {value || "—"}
-            </Typography>
-        </Stack>
-    );
-}
-
-function SectionLabel({ children }) {
+function MetaLabel({ children }) {
     return (
         <Typography
             sx={{
-                fontSize: "0.67rem",
+                fontSize: "0.62rem",
                 fontWeight: 700,
                 letterSpacing: "0.09em",
                 textTransform: "uppercase",
                 color: "text.disabled",
-                mb: 1,
+                mb: 0.5,
             }}
         >
             {children}
         </Typography>
     );
 }
-
-
 
 export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails }) {
     const [invoice, setInvoice] = useState(null);
@@ -106,157 +74,171 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
 
         getInvoice(invoiceId)
             .then((data) => { if (!cancelled) setInvoice(data); })
-            .catch((err) => { if (!cancelled) setError(err); })
-            .finally(() => { if (!cancelled) setLoading(false); });
+            .catch((err)  => { if (!cancelled) setError(err);   })
+            .finally(()   => { if (!cancelled) setLoading(false); });
 
         return () => { cancelled = true; };
     }, [open, invoiceId]);
 
-    const netto = invoice ? calcInvoiceNet(invoice) : 0;
+    const netto  = invoice ? calcInvoiceNet(invoice)   : 0;
     const brutto = invoice ? calcInvoiceGross(invoice) : 0;
 
     return (
-        <Drawer
-            anchor="right"
+        <Dialog
             open={open}
             onClose={onClose}
-            slotProps={{
-                paper: {
-                    sx: {
-                        width: { xs: "100vw", sm: DRAWER_WIDTH },
-                        display: "flex",
-                        flexDirection: "column",
-                        boxShadow: "-4px 0 28px rgba(0,0,0,0.1)",
-                    },
+            maxWidth={false}
+            PaperProps={{
+                sx: {
+                    width: { xs: "95vw", sm: 660 },
+                    maxHeight: "88vh",
+                    borderRadius: 2.5,
+                    boxShadow: "0 12px 48px rgba(0,0,0,0.18)",
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
                 },
             }}
         >
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    px: 3,
-                    minHeight: 60,
-                    borderBottom: "1px solid",
-                    borderColor: "divider",
-                    flexShrink: 0,
-                }}
-            >
-                <Stack direction="row" alignItems="center" spacing={1.5}>
-                    <Typography
-                        variant="subtitle1"
-                        fontWeight={700}
-                        sx={{ letterSpacing: "-0.01em" }}
-                    >
-                        {loading ? "Betöltés…" : invoice ? invoice.invoiceNumber : "Előnézet"}
+            {loading && (
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: 280 }}>
+                    <CircularProgress size={26} />
+                </Box>
+            )}
+
+            {!loading && error && (
+                <Box sx={{ p: 4 }}>
+                    <Typography variant="body2" color="error">
+                        Nem sikerült betölteni a számlát.
                     </Typography>
-                    {!loading && invoice && <StatusChip invoice={invoice} />}
-                </Stack>
+                </Box>
+            )}
 
-                <Tooltip title="Bezárás" placement="left">
-                    <IconButton onClick={onClose} size="small">
-                        <CloseIcon fontSize="small" />
-                    </IconButton>
-                </Tooltip>
-            </Box>
+            {!loading && invoice && (
+                <DialogContent sx={{ p: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
-            <Box sx={{ flex: 1, overflowY: "auto" }}>
-                {loading && (
+                    {/* ── Document header ── */}
                     <Box
                         sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: 220,
+                            px: 4,
+                            pt: 3,
+                            pb: 2.5,
+                            bgcolor: "grey.50",
+                            borderBottom: "1px solid",
+                            borderColor: "divider",
+                            flexShrink: 0,
                         }}
                     >
-                        <CircularProgress size={26} />
+                        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                            <Box>
+                                <Typography
+                                    sx={{
+                                        fontSize: "0.6rem",
+                                        fontWeight: 700,
+                                        letterSpacing: "0.14em",
+                                        textTransform: "uppercase",
+                                        color: "text.disabled",
+                                        mb: 0.5,
+                                    }}
+                                >
+                                    Számla
+                                </Typography>
+                                <Typography
+                                    variant="h6"
+                                    fontWeight={700}
+                                    sx={{ letterSpacing: "-0.02em", fontSize: "1.15rem", lineHeight: 1.2 }}
+                                >
+                                    {invoice.invoiceNumber}
+                                </Typography>
+                            </Box>
+
+                            <Stack alignItems="flex-end" spacing={1}>
+                                <IconButton size="small" onClick={onClose}>
+                                    <CloseIcon fontSize="small" />
+                                </IconButton>
+                                <StatusChip invoice={invoice} />
+                            </Stack>
+                        </Stack>
                     </Box>
-                )}
 
-                {!loading && error && (
-                    <Box sx={{ px: 3, pt: 3 }}>
-                        <Typography variant="body2" color="error">
-                            Nem sikerült betölteni a számlát.
-                        </Typography>
-                    </Box>
-                )}
+                    {/* ── Scrollable body ── */}
+                    <Box sx={{ overflowY: "auto", flex: 1 }}>
 
-                {!loading && invoice && (
-                    <>
-                        {/* General info */}
-                        <Box sx={{ px: 3, pt: 2.5, pb: 2 }}>
-                            <SectionLabel>Általános adatok</SectionLabel>
-                            <InfoRow
-                                label="Partner"
-                                value={
-                                    invoice.partnerName ||
-                                    invoice.partner?.name ||
-                                    invoice.partnerData?.name
-                                }
-                            />
-                            <InfoRow
-                                label="Fizetési mód"
-                                value={
-                                    PAYMENT_METHOD_LABEL[invoice.paymentMethod] ??
-                                    invoice.paymentMethod
-                                }
-                            />
-                        </Box>
+                        {/* Partner + dates row */}
+                        <Box sx={{ px: 4, py: 2.5 }}>
+                            <Stack direction="row" spacing={5}>
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <MetaLabel>Partner</MetaLabel>
+                                    <Typography variant="body2" fontWeight={600} sx={{ wordBreak: "break-word" }}>
+                                        {invoice.partnerName || invoice.partner?.name || invoice.partnerData?.name || "—"}
+                                    </Typography>
+                                </Box>
 
-                        {/* Dates */}
-                        <Box sx={{ px: 3, pb: 2 }}>
-                            <SectionLabel>Dátumok</SectionLabel>
-                            <InfoRow
-                                label="Kiállítás dátuma"
-                                value={
-                                    invoice.date
-                                        ? new Date(invoice.date).toLocaleDateString("hu-HU")
-                                        : null
-                                }
-                            />
-                            <InfoRow
-                                label="Fizetési határidő"
-                                value={
-                                    invoice.dueDate
-                                        ? new Date(invoice.dueDate).toLocaleDateString("hu-HU")
-                                        : null
-                                }
-                            />
-                            <InfoRow
-                                label="Teljesítési dátum"
-                                value={
-                                    invoice.completionDate
-                                        ? new Date(invoice.completionDate).toLocaleDateString("hu-HU")
-                                        : null
-                                }
-                            />
+                                <Box sx={{ flexShrink: 0 }}>
+                                    <MetaLabel>Adatok</MetaLabel>
+                                    <Stack spacing={0.3}>
+                                        {invoice.date && (
+                                            <Stack direction="row" spacing={1} alignItems="baseline">
+                                                <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", minWidth: 68 }}>
+                                                    Kiállítás:
+                                                </Typography>
+                                                <Typography sx={{ fontSize: "0.8rem", fontWeight: 500 }}>
+                                                    {new Date(invoice.date).toLocaleDateString("hu-HU")}
+                                                </Typography>
+                                            </Stack>
+                                        )}
+                                        {invoice.dueDate && (
+                                            <Stack direction="row" spacing={1} alignItems="baseline">
+                                                <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", minWidth: 68 }}>
+                                                    Határidő:
+                                                </Typography>
+                                                <Typography sx={{ fontSize: "0.8rem", fontWeight: 500 }}>
+                                                    {new Date(invoice.dueDate).toLocaleDateString("hu-HU")}
+                                                </Typography>
+                                            </Stack>
+                                        )}
+                                        {invoice.completionDate && (
+                                            <Stack direction="row" spacing={1} alignItems="baseline">
+                                                <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", minWidth: 68 }}>
+                                                    Teljesítés:
+                                                </Typography>
+                                                <Typography sx={{ fontSize: "0.8rem", fontWeight: 500 }}>
+                                                    {new Date(invoice.completionDate).toLocaleDateString("hu-HU")}
+                                                </Typography>
+                                            </Stack>
+                                        )}
+                                        {invoice.paymentMethod && (
+                                            <Stack direction="row" spacing={1} alignItems="baseline">
+                                                <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", minWidth: 68 }}>
+                                                    Fizetés:
+                                                </Typography>
+                                                <Typography sx={{ fontSize: "0.8rem", fontWeight: 500 }}>
+                                                    {PAYMENT_METHOD_LABEL[invoice.paymentMethod] ?? invoice.paymentMethod}
+                                                </Typography>
+                                            </Stack>
+                                        )}
+                                    </Stack>
+                                </Box>
+                            </Stack>
                         </Box>
 
                         <Divider />
 
-                        {/* Items */}
-                        <Box sx={{ px: 3, pt: 2.5, pb: 1 }}>
-                            <SectionLabel>
-                                Tételek{invoice.items?.length ? ` (${invoice.items.length})` : ""}
-                            </SectionLabel>
-                        </Box>
-
-                        <Box sx={{ px: 1.5, pb: 1 }}>
+                        {/* Line items table */}
+                        <Box sx={{ px: 2, py: 1 }}>
                             <Table size="small">
                                 <TableHead>
                                     <TableRow sx={{ bgcolor: "grey.50" }}>
-                                        <TableCell sx={{ fontSize: "0.73rem", fontWeight: 600, py: 1, pl: 1.5 }}>
-                                            Termék
+                                        <TableCell sx={{ fontSize: "0.7rem", fontWeight: 600, color: "text.secondary", py: 0.875, pl: 2 }}>
+                                            Termék / Szolgáltatás
                                         </TableCell>
-                                        <TableCell align="right" sx={{ fontSize: "0.73rem", fontWeight: 600, py: 1 }}>
+                                        <TableCell align="right" sx={{ fontSize: "0.7rem", fontWeight: 600, color: "text.secondary", py: 0.875 }}>
                                             Menny.
                                         </TableCell>
-                                        <TableCell align="right" sx={{ fontSize: "0.73rem", fontWeight: 600, py: 1 }}>
+                                        <TableCell align="right" sx={{ fontSize: "0.7rem", fontWeight: 600, color: "text.secondary", py: 0.875 }}>
                                             Egységár
                                         </TableCell>
-                                        <TableCell align="right" sx={{ fontSize: "0.73rem", fontWeight: 600, py: 1, pr: 1.5 }}>
+                                        <TableCell align="right" sx={{ fontSize: "0.7rem", fontWeight: 600, color: "text.secondary", py: 0.875, pr: 2 }}>
                                             Nettó
                                         </TableCell>
                                     </TableRow>
@@ -265,22 +247,22 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
                                     {invoice.items?.map((item, idx) => {
                                         const itemNetto = calcLineNet(item);
                                         return (
-                                            <TableRow key={idx}>
-                                                <TableCell sx={{ py: 1, pl: 1.5, maxWidth: 150 }}>
-                                                    <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
+                                            <TableRow key={idx} sx={{ "&:last-child td": { borderBottom: 0 } }}>
+                                                <TableCell sx={{ py: 1.25, pl: 2 }}>
+                                                    <Typography sx={{ fontSize: "0.82rem", fontWeight: 500 }}>
                                                         {item.productName}
                                                     </Typography>
-                                                    <Typography variant="caption" color="text.disabled" display="block">
+                                                    <Typography variant="caption" color="text.disabled">
                                                         ÁFA: {item.taxRate}%
                                                     </Typography>
                                                 </TableCell>
-                                                <TableCell align="right" sx={{ fontSize: "0.8rem", py: 1, whiteSpace: "nowrap" }}>
+                                                <TableCell align="right" sx={{ fontSize: "0.82rem", py: 1.25, whiteSpace: "nowrap" }}>
                                                     {item.productAmount} {item.productUnit}
                                                 </TableCell>
-                                                <TableCell align="right" sx={{ fontSize: "0.8rem", py: 1, whiteSpace: "nowrap" }}>
+                                                <TableCell align="right" sx={{ fontSize: "0.82rem", py: 1.25, whiteSpace: "nowrap" }}>
                                                     {item.amount.toLocaleString("hu-HU")} Ft
                                                 </TableCell>
-                                                <TableCell align="right" sx={{ fontSize: "0.8rem", py: 1, pr: 1.5, whiteSpace: "nowrap" }}>
+                                                <TableCell align="right" sx={{ fontSize: "0.82rem", py: 1.25, pr: 2, whiteSpace: "nowrap" }}>
                                                     {itemNetto.toLocaleString("hu-HU")} Ft
                                                 </TableCell>
                                             </TableRow>
@@ -291,10 +273,10 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
                         </Box>
 
                         {/* Totals */}
-                        <Box sx={{ px: 3, pt: 2, pb: 3 }}>
+                        <Box sx={{ px: 4, pt: 1.5, pb: 3 }}>
                             <Divider sx={{ mb: 2 }} />
                             <Stack spacing={0.75}>
-                                <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+                                <Stack direction="row" justifyContent="space-between">
                                     <Typography variant="body2" color="text.secondary">
                                         Nettó összesen
                                     </Typography>
@@ -302,7 +284,7 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
                                         {netto.toLocaleString("hu-HU")} Ft
                                     </Typography>
                                 </Stack>
-                                <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+                                <Stack direction="row" justifyContent="space-between">
                                     <Typography variant="body2" fontWeight={700}>
                                         Bruttó összesen
                                     </Typography>
@@ -312,54 +294,48 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
                                 </Stack>
                             </Stack>
                         </Box>
-                    </>
-                )}
-            </Box>
+                    </Box>
 
-            {!loading && invoice && (
-                <Box
-                    sx={{
-                        flexShrink: 0,
-                        borderTop: "1px solid",
-                        borderColor: "divider",
-                        px: 3,
-                        py: 2,
-                        display: "flex",
-                        gap: 1.5,
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        startIcon={<OpenInFullIcon sx={{ fontSize: "15px !important" }} />}
-                        onClick={onOpenDetails}
+                    {/* ── Footer actions ── */}
+                    <Box
                         sx={{
-                            flex: 1,
-                            textTransform: "none",
-                            fontWeight: 600,
-                            borderRadius: 1.5,
-                            fontSize: "0.875rem",
+                            flexShrink: 0,
+                            borderTop: "1px solid",
+                            borderColor: "divider",
+                            px: 3,
+                            py: 1.75,
+                            display: "flex",
+                            gap: 1.5,
+                            bgcolor: "grey.50",
                         }}
                     >
-                        Részletek megnyitása
-                    </Button>
-                    <Tooltip title="PDF letöltése" placement="top">
                         <Button
-                            variant="outlined"
-                            onClick={() => downloadInvoice(invoice.id, invoice.invoiceNumber)}
+                            variant="contained"
+                            disableElevation
+                            startIcon={<OpenInFullIcon sx={{ fontSize: "15px !important" }} />}
+                            onClick={onOpenDetails}
                             sx={{
+                                flex: 1,
                                 textTransform: "none",
-                                fontWeight: 500,
+                                fontWeight: 600,
                                 borderRadius: 1.5,
-                                minWidth: "unset",
-                                px: 2,
+                                fontSize: "0.875rem",
                             }}
                         >
-                            <DownloadIcon sx={{ fontSize: 18 }} />
+                            Részletek megnyitása
                         </Button>
-                    </Tooltip>
-                </Box>
+                        <Tooltip title="PDF letöltése" placement="top">
+                            <Button
+                                variant="outlined"
+                                onClick={() => downloadInvoice(invoice.id, invoice.invoiceNumber)}
+                                sx={{ textTransform: "none", borderRadius: 1.5, minWidth: "unset", px: 2 }}
+                            >
+                                <DownloadIcon sx={{ fontSize: 18 }} />
+                            </Button>
+                        </Tooltip>
+                    </Box>
+                </DialogContent>
             )}
-        </Drawer>
+        </Dialog>
     );
 }
