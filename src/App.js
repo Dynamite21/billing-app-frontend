@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Navbar from "./components/Navbar";
 import InvoicesView from "./view/InvoicesView";
@@ -19,12 +18,9 @@ import DashboardView from "./view/DashboardView";
 import PartnerDetailsView from "./view/PartnerDetailsView";
 import PartnerFormView from "./view/PartnerFormView";
 
-const queryClient = new QueryClient();
-
 export default function App() {
     return (
-        <QueryClientProvider client={queryClient}>
-            <AuthProvider>
+        <AuthProvider>
                 <Router>
                     <Navbar />
                     <FlashSnackbar />
@@ -120,6 +116,5 @@ export default function App() {
                     </Routes>
                 </Router>
             </AuthProvider>
-        </QueryClientProvider>
     );
 }
