@@ -19,7 +19,6 @@ api.interceptors.request.use(
             const token = await user.getIdToken();
             config.headers.Authorization = `Bearer ${token}`;
         }
-
         return config;
     },
     (error) => Promise.reject(error)

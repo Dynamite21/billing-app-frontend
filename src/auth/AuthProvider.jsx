@@ -17,7 +17,6 @@ export function AuthProvider({ children }) {
         return () => unsub();
     }, []);
 
-
     return (
         <AuthContext.Provider value={{ user, loading }}>
             {children}
