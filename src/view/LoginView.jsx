@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
@@ -12,6 +12,8 @@ export default function LoginView({ onToken }) {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from;
 
     const goInvoicesWithFlash = (text, severity = "success") => {
         navigate("/invoices", {
@@ -67,7 +69,7 @@ export default function LoginView({ onToken }) {
 
                 <Typography variant="body2" sx={{ textAlign: "center" }}>
                     Nincs még fiókod?{" "}
-                    <Link component={RouterLink} to="/register" underline="hover">
+                    <Link component={RouterLink} to="/register" state={{ from }} underline="hover">
                         Regisztráció
                     </Link>
                 </Typography>

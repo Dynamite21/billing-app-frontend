@@ -33,6 +33,7 @@ export default function Navbar() {
     const [companyName, setCompanyName] = useState("");
 
     useEffect(() => {
+        setCompanyName("");
         if (!user) return;
         getBillingAccount()
             .then((data) => setCompanyName(data?.companyName || ""))
