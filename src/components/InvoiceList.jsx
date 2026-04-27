@@ -75,22 +75,48 @@ const PAYMENT_METHOD_LABEL = Object.fromEntries(
 );
 
 const EMPTY_FILTERS = {
-    paymentMethod: "",
-    storno:        "",
-    issueDateFrom: "",
-    issueDateTo:   "",
-    dueDateFrom:   "",
-    dueDateTo:     "",
+    paymentMethod:      "",
+    storno:             "",
+    issueDateFrom:      "",
+    issueDateTo:        "",
+    dueDateFrom:        "",
+    dueDateTo:          "",
+    completionDateFrom: "",
+    completionDateTo:   "",
 };
 
-// Hides the browser's native date-format hint (e.g. "éééé. hh. nn.")
-// when the field is empty and not focused. The hint reappears on focus
-// so the user still gets guidance while editing.
-const DATE_INPUT_SX = {
-    "& input[type='date'][value='']:not(:focus)::-webkit-datetime-edit": {
-        color: "transparent",
-    },
-};
+function FilterDateField({ label, value, onChange }) {
+    return (
+        <TextField
+            label={label}
+            type="date"
+            size="small"
+            fullWidth
+            value={value}
+            onChange={onChange}
+            slotProps={{ inputLabel: { shrink: true } }}
+            sx={{
+                "& input[type='date']:not(:focus)::-webkit-datetime-edit": {
+                    color: value ? undefined : "transparent",
+                },
+                "& .MuiInputBase-root::after": {
+                    content: value ? '""' : '"év-hó-nap"',
+                    position: "absolute",
+                    left: "14px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "rgba(0,0,0,0.38)",
+                    fontSize: "0.8rem",
+                    pointerEvents: "none",
+                    zIndex: 1,
+                },
+                "& .MuiInputBase-root:focus-within::after": {
+                    content: '""',
+                },
+            }}
+        />
+    );
+}
 
 function FilterSectionLabel({ children }) {
     return (
@@ -159,6 +185,8 @@ export default function InvoiceList() {
         filters.issueDateTo,
         filters.dueDateFrom,
         filters.dueDateTo,
+        filters.completionDateFrom,
+        filters.completionDateTo,
         amountFilterActive,
     ].filter(Boolean).length;
 
@@ -668,13 +696,21 @@ export default function InvoiceList() {
                         <Divider />
 
                         <Box>
-                            <FilterSectionLabel>Fizetési mód</FilterSectionLabel>
                             <TextField
                                 select
                                 size="small"
                                 fullWidth
                                 value={filters.paymentMethod}
                                 onChange={(e) => setFilterField("paymentMethod", e.target.value)}
+                                slotProps={{
+                                    select: {
+                                        displayEmpty: true,
+                                        renderValue: (v) =>
+                                            v ? (PAYMENT_METHOD_LABEL[v] ?? v) : (
+                                                <span style={{ color: "rgba(0,0,0,0.38)" }}>Fizetési mód</span>
+                                            ),
+                                    },
+                                }}
                             >
                                 <MenuItem value="">Minden fizetési mód</MenuItem>
                                 {PAYMENT_METHODS.map(({ value, label }) => (
@@ -715,52 +751,24 @@ export default function InvoiceList() {
                         <Box>
                             <FilterSectionLabel>Kiállítás dátuma</FilterSectionLabel>
                             <Stack direction="row" spacing={1}>
-                                <TextField
-                                    label="Tól"
-                                    type="date"
-                                    size="small"
-                                    fullWidth
-                                    value={filters.issueDateFrom}
-                                    onChange={(e) => setFilterField("issueDateFrom", e.target.value)}
-                                    InputLabelProps={{ shrink: true }}
-                                    sx={DATE_INPUT_SX}
-                                />
-                                <TextField
-                                    label="Ig"
-                                    type="date"
-                                    size="small"
-                                    fullWidth
-                                    value={filters.issueDateTo}
-                                    onChange={(e) => setFilterField("issueDateTo", e.target.value)}
-                                    InputLabelProps={{ shrink: true }}
-                                    sx={DATE_INPUT_SX}
-                                />
+                                <FilterDateField label="Tól" value={filters.issueDateFrom} onChange={(e) => setFilterField("issueDateFrom", e.target.value)} />
+                                <FilterDateField label="Ig"  value={filters.issueDateTo}   onChange={(e) => setFilterField("issueDateTo",   e.target.value)} />
                             </Stack>
                         </Box>
 
                         <Box>
                             <FilterSectionLabel>Fizetési határidő</FilterSectionLabel>
                             <Stack direction="row" spacing={1}>
-                                <TextField
-                                    label="Tól"
-                                    type="date"
-                                    size="small"
-                                    fullWidth
-                                    value={filters.dueDateFrom}
-                                    onChange={(e) => setFilterField("dueDateFrom", e.target.value)}
-                                    InputLabelProps={{ shrink: true }}
-                                    sx={DATE_INPUT_SX}
-                                />
-                                <TextField
-                                    label="Ig"
-                                    type="date"
-                                    size="small"
-                                    fullWidth
-                                    value={filters.dueDateTo}
-                                    onChange={(e) => setFilterField("dueDateTo", e.target.value)}
-                                    InputLabelProps={{ shrink: true }}
-                                    sx={DATE_INPUT_SX}
-                                />
+                                <FilterDateField label="Tól" value={filters.dueDateFrom} onChange={(e) => setFilterField("dueDateFrom", e.target.value)} />
+                                <FilterDateField label="Ig"  value={filters.dueDateTo}   onChange={(e) => setFilterField("dueDateTo",   e.target.value)} />
+                            </Stack>
+                        </Box>
+
+                        <Box>
+                            <FilterSectionLabel>Teljesítés dátuma</FilterSectionLabel>
+                            <Stack direction="row" spacing={1}>
+                                <FilterDateField label="Tól" value={filters.completionDateFrom} onChange={(e) => setFilterField("completionDateFrom", e.target.value)} />
+                                <FilterDateField label="Ig"  value={filters.completionDateTo}   onChange={(e) => setFilterField("completionDateTo",   e.target.value)} />
                             </Stack>
                         </Box>
 
