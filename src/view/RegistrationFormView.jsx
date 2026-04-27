@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
     Box,
     Paper,
@@ -106,6 +106,8 @@ function SectionLabel({ children }) {
 
 export default function RegistrationFormView({ onToken }) {
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectTo = location.state?.from?.pathname || "/invoices";
 
     const [error, setError] = useState("");
     const [saving, setSaving] = useState(false);
@@ -141,6 +143,7 @@ export default function RegistrationFormView({ onToken }) {
         if (!form.postalCode.trim()) return "Az irányítószám kötelező.";
         if (!form.city.trim()) return "A város kötelező.";
         if (!form.streetAndHouseNumber.trim()) return "Az utca, házszám kötelező.";
+        if (!form.bankAccountNumber.trim()) return "A bankszámlaszám kötelező.";
 
         return "";
     }
@@ -163,7 +166,7 @@ export default function RegistrationFormView({ onToken }) {
 
             await createBillingAccount({ ...form });
 
-            navigate("/invoices", {
+            navigate(redirectTo, {
                 replace: true,
                 state: { flash: { text: "Sikeres regisztráció! Fiók létrehozva.", severity: "success" } },
             });
@@ -344,7 +347,7 @@ export default function RegistrationFormView({ onToken }) {
 
                             <Grid item xs={12} md={6}>
                                 <TextField
-                                    label="Bankszámlaszám"
+                                    label="Bankszámlaszám *"
                                     fullWidth
                                     value={form.bankAccountNumber}
                                     onChange={(e) =>

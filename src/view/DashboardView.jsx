@@ -465,7 +465,7 @@ export default function DashboardView() {
                         </SectionPanel>
 
                         <SectionPanel>
-                            <PanelHeader>Stornó számlák</PanelHeader>
+                            <PanelHeader>Sztornó számlák</PanelHeader>
                             <Box sx={{ px: 2.5, py: 2 }}>
                                 <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 1.75 }}>
                                     <WarningAmberIcon
@@ -476,7 +476,7 @@ export default function DashboardView() {
                                         }}
                                     />
                                     <Typography variant="caption" sx={{ fontWeight: 600, color: "text.secondary" }}>
-                                        {storno.count} db stornó számla
+                                        {storno.count} db sztornó számla
                                     </Typography>
                                 </Stack>
                                 <Typography
