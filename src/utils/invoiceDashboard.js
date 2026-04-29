@@ -19,8 +19,8 @@ export function calcInvoiceGross(inv) {
 }
 
 function isInMonth(inv, year, month) {
-    if (!inv.date) return false;
-    const d = new Date(inv.date);
+    if (!inv.completionDate) return false;
+    const d = new Date(inv.completionDate);
     return d.getFullYear() === year && d.getMonth() === month;
 }
 
@@ -97,8 +97,8 @@ export function calcStornoStats(invoices, year, month) {
 export function getEarliestMonth(invoices) {
     let earliest = null;
     invoices.forEach((inv) => {
-        if (!inv.date) return;
-        const d = new Date(inv.date);
+        if (!inv.completionDate) return;
+        const d = new Date(inv.completionDate);
         if (!earliest || d < earliest) earliest = d;
     });
     if (!earliest) return null;
