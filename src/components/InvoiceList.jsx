@@ -41,15 +41,6 @@ const AMOUNT_MAX = 10_000_000;
 
 const formatFt = (v) => `${v.toLocaleString("hu-HU")} Ft`;
 
-// Parses PREFIX-YYYY-COUNTER → { year, counter } as numbers.
-// Works regardless of prefix length or number of prefix segments.
-function parseInvoiceNum(invoiceNumber) {
-    const parts = (invoiceNumber || "").split("-");
-    return {
-        year:    parseInt(parts[parts.length - 2], 10) || 0,
-        counter: parseInt(parts[parts.length - 1], 10) || 0,
-    };
-}
 
 const SORT_OPTIONS = [
     { value: "date_desc",        label: "Legújabb",     sortBy: "date",        sortDir: "desc" },
@@ -96,22 +87,11 @@ function FilterDateField({ label, value, onChange }) {
             onChange={onChange}
             slotProps={{ inputLabel: { shrink: true } }}
             sx={{
-                "& input[type='date']:not(:focus)::-webkit-datetime-edit": {
-                    color: value ? undefined : "transparent",
+                "& input[type='date']": {
+                    color: value ? undefined : "rgba(0,0,0,0.38)",
                 },
-                "& .MuiInputBase-root::after": {
-                    content: value ? '""' : '"év-hó-nap"',
-                    position: "absolute",
-                    left: "14px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "rgba(0,0,0,0.38)",
-                    fontSize: "0.8rem",
-                    pointerEvents: "none",
-                    zIndex: 1,
-                },
-                "& .MuiInputBase-root:focus-within::after": {
-                    content: '""',
+                "& input[type='date']:focus": {
+                    color: value ? undefined : "transparent !important",
                 },
             }}
         />
@@ -153,6 +133,8 @@ export default function InvoiceList() {
     const [amountRange, setAmountRange] = useState([0, AMOUNT_MAX]);
     const amountFilterActive = amountRange[0] > 0 || amountRange[1] < AMOUNT_MAX;
 
+    const { sortBy, sortDir } = SORT_OPTIONS.find((o) => o.value === sortOption) ?? SORT_OPTIONS[0];
+
     const searchLower = search.trim().toLowerCase();
     const displayedInvoices = invoices.filter((inv) => {
         if (searchLower) {
@@ -169,7 +151,7 @@ export default function InvoiceList() {
         return true;
     });
 
-    const pagedInvoices = displayedInvoices.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const pagedInvoices = displayedInvoices;
 
     const [selectedId, setSelectedId] = useState(null);
     const [previewOpen, setPreviewOpen] = useState(false);
@@ -191,52 +173,21 @@ export default function InvoiceList() {
     ].filter(Boolean).length;
 
     useEffect(() => {
-        const { sortBy, sortDir } =
-            SORT_OPTIONS.find((o) => o.value === sortOption) ?? SORT_OPTIONS[0];
-
         let cancelled = false;
-
-        const isClientSort = sortBy === "date" || sortBy === "brutto" || sortBy === "partnerName";
 
         const load = async () => {
             try {
                 setFetching(true);
                 setError(null);
                 const data = await listInvoices({
-                    page: isClientSort ? 0 : page,
-                    size: isClientSort ? 10000 : rowsPerPage,
-                    sortBy: isClientSort ? "date" : sortBy,
-                    sortDir: isClientSort ? "desc" : sortDir,
+                    page,
+                    size: rowsPerPage,
+                    sortBy,
+                    sortDir,
                     ...filters,
                 });
                 if (!cancelled) {
-                    let content = data.content || [];
-                    if (isClientSort) {
-                        if (sortBy === "date") {
-                            content = [...content].sort((a, b) => {
-                                const dateA = a.date ? new Date(a.date).getTime() : 0;
-                                const dateB = b.date ? new Date(b.date).getTime() : 0;
-                                if (dateA !== dateB) return sortDir === "desc" ? dateB - dateA : dateA - dateB;
-                                const { year: yA, counter: cA } = parseInvoiceNum(a.invoiceNumber);
-                                const { year: yB, counter: cB } = parseInvoiceNum(b.invoiceNumber);
-                                if (yA !== yB) return sortDir === "desc" ? yB - yA : yA - yB;
-                                return sortDir === "desc" ? cB - cA : cA - cB;
-                            });
-                        } else if (sortBy === "brutto") {
-                            content = [...content].sort((a, b) =>
-                                sortDir === "asc" ? calcInvoiceGross(a) - calcInvoiceGross(b) : calcInvoiceGross(b) - calcInvoiceGross(a)
-                            );
-                        } else {
-                            content = [...content].sort((a, b) => {
-                                const nameA = (a.partnerData?.name || "").toLowerCase();
-                                const nameB = (b.partnerData?.name || "").toLowerCase();
-                                return sortDir === "asc"
-                                    ? nameA.localeCompare(nameB, "hu")
-                                    : nameB.localeCompare(nameA, "hu");
-                            });
-                        }
-                    }
-                    setInvoices(content);
+                    setInvoices(data.content || []);
                     setTotalElements(data.totalElements || 0);
                 }
             } catch (err) {
@@ -542,7 +493,7 @@ export default function InvoiceList() {
                 <Divider />
                 <TablePagination
                     component="div"
-                    count={displayedInvoices.length}
+                    count={totalElements}
                     page={page}
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}

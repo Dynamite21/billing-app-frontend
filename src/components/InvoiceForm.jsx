@@ -82,18 +82,24 @@ function DateField({ label, name, value, onChange, required, disabled }) {
             fullWidth
             required={required}
             disabled={disabled}
-            InputLabelProps={{ shrink: true }}
             inputRef={inputRef}
-            sx={{
-                cursor: disabled ? "default" : "pointer",
-                "& input[type='date']::-webkit-calendar-picker-indicator": { display: "none" },
-            }}
+            InputLabelProps={{ shrink: true }}
             InputProps={{
                 endAdornment: (
                     <InputAdornment position="end" sx={{ pointerEvents: "none" }}>
                         <CalendarTodayIcon fontSize="small" color="action" />
                     </InputAdornment>
                 ),
+            }}
+            sx={{
+                cursor: disabled ? "default" : "pointer",
+                "& input[type='date']::-webkit-calendar-picker-indicator": { display: "none" },
+                "& input[type='date']": {
+                    color: value ? undefined : "rgba(0,0,0,0.38)",
+                },
+                "& input[type='date']:focus": {
+                    color: value ? undefined : "transparent !important",
+                },
             }}
         />
     );
@@ -316,6 +322,7 @@ export default function InvoiceForm({ initialData, onClose, onSaved }) {
                                 name="completionDate"
                                 value={form.completionDate}
                                 onChange={handleChange}
+                                required
                             />
                         </Stack>
                     </Box>
