@@ -218,7 +218,7 @@ export default function InvoiceDetailsView() {
                             borderRadius: 1.5,
                         }}
                     >
-                        Stornó
+                        Sztornó
                     </Button>
                     <Button
                         variant="contained"
