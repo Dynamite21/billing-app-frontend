@@ -67,7 +67,6 @@ function SectionHeader({ children }) {
     );
 }
 
-/** Date field that opens the native picker on any click, not just the icon. */
 function DateField({ label, name, value, onChange, required, disabled }) {
     const inputRef = useRef(null);
 
@@ -105,7 +104,6 @@ function DateField({ label, name, value, onChange, required, disabled }) {
     );
 }
 
-/** Number input that shows formatted thousands while idle, raw digits while editing. */
 function PriceField({ value, name, onChange, required }) {
     const [focused, setFocused] = useState(false);
 
@@ -142,8 +140,6 @@ const localDateString = () => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
-
-// ── Main component ─────────────────────────────────────────
 
 export default function InvoiceForm({ initialData, onClose, onSaved }) {
     const [form, setForm] = useState({
