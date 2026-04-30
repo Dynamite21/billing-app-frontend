@@ -32,7 +32,7 @@ import SwapVertIcon from "@mui/icons-material/SwapVert";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { listInvoices } from "../services/invoices";
-import { calcInvoiceGross, calcInvoiceNet } from "../utils/invoiceDashboard";
+import { calcInvoiceNet } from "../utils/invoiceDashboard";
 import InvoicePreview from "./InvoicePreview";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -145,7 +145,7 @@ export default function InvoiceList() {
             }
         }
         if (amountFilterActive && filters.storno !== true && !inv.storno) {
-            const brutto = calcInvoiceGross(inv);
+            const brutto = inv.grossAmount ?? 0;
             if (brutto < amountRange[0] || brutto > amountRange[1]) return false;
         }
         return true;
@@ -390,7 +390,7 @@ export default function InvoiceList() {
                             ) : (
                                 pagedInvoices.map((inv) => {
                                     const netto = calcInvoiceNet(inv);
-                                    const brutto = calcInvoiceGross(inv);
+                                    const brutto = inv.grossAmount ?? 0;
                                     const isSelected = selectedId === inv.id && previewOpen;
 
                                     return (

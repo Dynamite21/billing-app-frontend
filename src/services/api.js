@@ -9,6 +9,17 @@ const api = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
+    paramsSerializer: (params) => {
+        const sp = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach((v) => sp.append(key, v));
+            } else if (value != null) {
+                sp.append(key, String(value));
+            }
+        });
+        return sp.toString();
+    },
 });
 
 api.interceptors.request.use(
