@@ -35,8 +35,6 @@ import { listInvoices } from "../services/invoices";
 import { calcInvoiceNet } from "../utils/invoiceDashboard";
 import InvoicePreview from "./InvoicePreview";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 const AMOUNT_MAX = 10_000_000;
 
 const formatFt = (v) => `${v.toLocaleString("hu-HU")} Ft`;
@@ -698,7 +696,6 @@ export default function InvoiceList() {
 
                         <Divider />
 
-                        {/* ── 4. Kiállítás dátuma ── */}
                         <Box>
                             <FilterSectionLabel>Kiállítás dátuma</FilterSectionLabel>
                             <Stack direction="row" spacing={1}>

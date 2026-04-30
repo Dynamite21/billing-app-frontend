@@ -102,7 +102,6 @@ function EditableField({ label, value, onChange, isEditing, sx: sxProp, slotProp
                 ...slotPropsProp,
                 input: { readOnly: !isEditing, ...slotPropsProp?.input },
             }}
-            // inputProps targets the native <input> element — prevents focus behaviour in view mode
             inputProps={
                 !isEditing
                     ? {

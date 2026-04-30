@@ -146,7 +146,6 @@ export default function PartnerFormView() {
     return (
         <Container maxWidth="md" sx={{ mt: 3, mb: 4 }}>
 
-            {/* Header */}
             <Stack spacing={0.25} sx={{ mb: 2.5 }}>
                 <Button
                     size="small"
@@ -174,7 +173,6 @@ export default function PartnerFormView() {
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2} alignItems="flex-start">
 
-                    {/* Left column — identity */}
                     <Grid size={{ xs: 12, md: 5 }}>
                         <Paper
                             elevation={0}
@@ -229,7 +227,6 @@ export default function PartnerFormView() {
                         </Paper>
                     </Grid>
 
-                    {/* Right column — contact & address */}
                     <Grid size={{ xs: 12, md: 7 }}>
                         <Paper
                             elevation={0}

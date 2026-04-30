@@ -117,7 +117,6 @@ export default function PartnerDetailsView() {
     return (
         <Container maxWidth="sm" sx={{ mt: 3, mb: 6 }}>
 
-            {/* Back link */}
             <Button
                 size="small"
                 startIcon={<ArrowBackIcon />}
@@ -134,7 +133,6 @@ export default function PartnerDetailsView() {
                 Vissza
             </Button>
 
-            {/* Header card */}
             <Paper
                 elevation={0}
                 sx={{
@@ -192,7 +190,6 @@ export default function PartnerDetailsView() {
                 </Stack>
             </Paper>
 
-            {/* Details card */}
             <Paper
                 elevation={0}
                 sx={{

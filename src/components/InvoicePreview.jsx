@@ -117,7 +117,6 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
             {!loading && invoice && (
                 <DialogContent sx={{ p: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
-                    {/* ── Document header ── */}
                     <Box
                         sx={{
                             px: 4,
@@ -161,10 +160,8 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
                         </Stack>
                     </Box>
 
-                    {/* ── Scrollable body ── */}
                     <Box sx={{ overflowY: "auto", flex: 1 }}>
 
-                        {/* Partner + dates row */}
                         <Box sx={{ px: 4, py: 2.5 }}>
                             <Stack direction="row" spacing={5}>
                                 <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -224,7 +221,6 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
 
                         <Divider />
 
-                        {/* Line items table */}
                         <Box sx={{ px: 2, py: 1 }}>
                             <Table size="small">
                                 <TableHead>
@@ -272,7 +268,6 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
                             </Table>
                         </Box>
 
-                        {/* Totals */}
                         <Box sx={{ px: 4, pt: 1.5, pb: 3 }}>
                             <Divider sx={{ mb: 2 }} />
                             <Stack spacing={0.75}>
@@ -296,7 +291,6 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
                         </Box>
                     </Box>
 
-                    {/* ── Footer actions ── */}
                     <Box
                         sx={{
                             flexShrink: 0,
