@@ -92,7 +92,6 @@ const isActive = (path) => location.pathname.startsWith(path);
                     px: { xs: 2, sm: 3 },
                 }}
             >
-                {/* Brand */}
                 <Box
                     component={Link}
                     to="/invoices"

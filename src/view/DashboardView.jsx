@@ -265,7 +265,6 @@ export default function DashboardView() {
     return (
         <Container sx={{ mt: 4, mb: 8 }}>
 
-            {/* Month header — above both columns, belongs to neither */}
             <Box sx={{ mb: 4, pl: 2, borderLeft: "3px solid #94a3b8" }}>
                 <Stack direction="row" alignItems="center" spacing={0.25} sx={{ mb: 0.5 }}>
                     <IconButton
@@ -300,7 +299,6 @@ export default function DashboardView() {
                 </Typography>
             </Box>
 
-            {/* Two-column content area */}
             <Box
                 sx={{
                     display: "flex",
@@ -310,7 +308,6 @@ export default function DashboardView() {
                 }}
             >
 
-                {/* Left — monthly statistics */}
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Box
                         sx={{
@@ -503,7 +500,6 @@ export default function DashboardView() {
                     </Box>
                 </Box>
 
-                {/* Right — due invoices aside */}
                 <Box
                     sx={{
                         width: { xs: "100%", md: 300 },

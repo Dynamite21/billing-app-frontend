@@ -47,8 +47,6 @@ const emptyPartnerForm = {
     email: "",
 };
 
-// ── Helpers ────────────────────────────────────────────────
-
 function SectionHeader({ children }) {
     return (
         <Typography
@@ -251,7 +249,6 @@ export default function InvoiceForm({ initialData, onClose, onSaved }) {
         }
     };
 
-    // Quick-add partner
     const handleNewPartnerChange = (e) => {
         const { name, value } = e.target;
         setNewPartner((prev) => ({ ...prev, [name]: value }));

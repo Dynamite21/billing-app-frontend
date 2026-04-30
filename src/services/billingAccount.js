@@ -1,5 +1,3 @@
-// src/services/billingAccount.js
-
 import api from "./api";
 
 export async function getBillingAccount() {
