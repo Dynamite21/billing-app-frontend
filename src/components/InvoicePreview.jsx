@@ -21,7 +21,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import DownloadIcon from "@mui/icons-material/Download";
 import { downloadInvoice, getInvoice } from "../services/invoices";
-import { calcInvoiceGross, calcInvoiceNet, calcLineNet } from "../utils/invoiceDashboard";
+import { calcInvoiceNet, calcLineNet } from "../utils/invoiceDashboard";
 
 const PAYMENT_METHOD_LABEL = {
     CARD: "Bankkártya",
@@ -80,8 +80,8 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
         return () => { cancelled = true; };
     }, [open, invoiceId]);
 
-    const netto  = invoice ? calcInvoiceNet(invoice)   : 0;
-    const brutto = invoice ? calcInvoiceGross(invoice) : 0;
+    const netto  = invoice ? calcInvoiceNet(invoice)  : 0;
+    const brutto = invoice ? (invoice.grossAmount ?? 0) : 0;
 
     return (
         <Dialog

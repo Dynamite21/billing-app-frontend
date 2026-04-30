@@ -13,9 +13,15 @@ export async function listInvoices(params = {}) {
         Object.entries(filters).filter(([, v]) => v !== "" && v != null)
     );
 
+    const SORT_FIELD_MAP = {
+        partnerName: "partnerData.name",
+        brutto: "grossAmount",
+    };
+    const backendField = SORT_FIELD_MAP[sortBy] ?? sortBy;
+
     const sort = sortBy === "date"
         ? [`date,${sortDir}`, `invoiceNumber,${sortDir}`]
-        : `${sortBy},${sortDir}`;
+        : `${backendField},${sortDir}`;
 
     const queryParams = {
         page,

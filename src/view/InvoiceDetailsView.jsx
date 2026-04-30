@@ -28,7 +28,7 @@ import {
     getInvoice,
     markInvoiceAsStorno,
 } from "../services/invoices";
-import { calcInvoiceGross, calcInvoiceNet, calcLineGross, calcLineNet } from "../utils/invoiceDashboard";
+import { calcInvoiceNet, calcLineGross, calcLineNet } from "../utils/invoiceDashboard";
 
 const PAYMENT_METHOD_LABEL = {
     CARD: "Bankkártya",
@@ -163,7 +163,7 @@ export default function InvoiceDetailsView() {
     }
 
     const nettoTotal = calcInvoiceNet(invoice);
-    const bruttoTotal = calcInvoiceGross(invoice);
+    const bruttoTotal = invoice.grossAmount ?? 0;
 
     return (
         <Box sx={{ maxWidth: 860, mx: "auto", mt: 4, mb: 8, px: { xs: 2, sm: 3 } }}>
