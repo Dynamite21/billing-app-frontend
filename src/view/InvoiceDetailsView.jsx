@@ -164,7 +164,7 @@ export default function InvoiceDetailsView() {
     }
 
     const nettoTotal = calcInvoiceNet(invoice);
-    const bruttoTotal = invoice.grossAmount ?? 0;
+    const bruttoTotal = Math.round(invoice.grossAmount ?? 0);
 
     return (
         <Box sx={{ maxWidth: 860, mx: "auto", mt: 4, mb: 8, px: { xs: 2, sm: 3 } }}>
