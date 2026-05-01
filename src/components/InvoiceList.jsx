@@ -142,10 +142,6 @@ export default function InvoiceList() {
                 return false;
             }
         }
-        if (amountFilterActive && filters.storno !== true && !inv.storno) {
-            const brutto = inv.grossAmount ?? 0;
-            if (brutto < amountRange[0] || brutto > amountRange[1]) return false;
-        }
         return true;
     });
 
@@ -183,6 +179,9 @@ export default function InvoiceList() {
                     sortBy,
                     sortDir,
                     ...filters,
+                    ...(amountFilterActive && filters.storno !== true
+                        ? { grossAmountMin: amountRange[0] || undefined, grossAmountMax: amountRange[1] < AMOUNT_MAX ? amountRange[1] : undefined }
+                        : {}),
                 });
                 if (!cancelled) {
                     setInvoices(data.content || []);
@@ -197,7 +196,7 @@ export default function InvoiceList() {
 
         load();
         return () => { cancelled = true; };
-    }, [page, rowsPerPage, sortOption, filters]);
+    }, [page, rowsPerPage, sortOption, filters, amountRange]);
 
     const setFilterField = (field, value) => {
         setFilters((prev) => ({ ...prev, [field]: value }));

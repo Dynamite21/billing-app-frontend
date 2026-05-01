@@ -119,6 +119,7 @@ export default function InvoiceDetailsView() {
         try {
             const stornoInvoice = {
                 date: new Date().toISOString().slice(0, 10),
+                dueDate: invoice.dueDate,
                 completionDate: invoice.completionDate,
                 partnerId: invoice.partnerId,
                 partnerData: invoice.partnerData || invoice.partner,
