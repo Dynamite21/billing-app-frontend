@@ -25,6 +25,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { createInvoice } from "../services/invoices";
 import { listPartners, savePartner } from "../services/partners";
+import { calcLineNet, calcLineGross } from "../utils/invoiceDashboard";
 
 const paymentMethods = [
     { value: "CARD", label: "Bankkártya" },
@@ -75,7 +76,7 @@ function DateField({ label, name, value, onChange, required, disabled }) {
             type="date"
             value={value}
             onChange={onChange}
-            onClick={disabled ? undefined : () => inputRef.current?.showPicker?.()}
+            onClick={disabled ? undefined : () => { try { inputRef.current?.showPicker?.(); } catch (_) {} }}
             fullWidth
             required={required}
             disabled={disabled}
@@ -275,18 +276,14 @@ export default function InvoiceForm({ initialData, onClose, onSaved }) {
         }
     };
 
-    const nettoTotal = form.items.reduce(
-        (sum, i) => sum + parseFloat(i.amount || 0) * parseFloat(i.productAmount || 0),
-        0
-    );
-    const bruttoTotal = form.items.reduce(
-        (sum, i) =>
-            sum +
-            parseFloat(i.amount || 0) *
-                parseFloat(i.productAmount || 0) *
-                (1 + parseFloat(i.taxRate || 0) / 100),
-        0
-    );
+    const nettoTotal = form.items.reduce((sum, i) => {
+        const item = { amount: parseFloat(i.amount || 0), productAmount: parseFloat(i.productAmount || 0), taxRate: parseFloat(i.taxRate || 0) };
+        return sum + calcLineNet(item);
+    }, 0);
+    const bruttoTotal = form.items.reduce((sum, i) => {
+        const item = { amount: parseFloat(i.amount || 0), productAmount: parseFloat(i.productAmount || 0), taxRate: parseFloat(i.taxRate || 0) };
+        return sum + calcLineGross(item);
+    }, 0);
 
     return (
         <>

@@ -387,7 +387,7 @@ export default function InvoiceList() {
                             ) : (
                                 pagedInvoices.map((inv) => {
                                     const netto = calcInvoiceNet(inv);
-                                    const brutto = inv.grossAmount ?? 0;
+                                    const brutto = Math.round(inv.grossAmount ?? 0);
                                     const isSelected = selectedId === inv.id && previewOpen;
 
                                     return (

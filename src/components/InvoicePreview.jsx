@@ -81,7 +81,7 @@ export default function InvoicePreview({ invoiceId, open, onClose, onOpenDetails
     }, [open, invoiceId]);
 
     const netto  = invoice ? calcInvoiceNet(invoice)  : 0;
-    const brutto = invoice ? (invoice.grossAmount ?? 0) : 0;
+    const brutto = invoice ? Math.round(invoice.grossAmount ?? 0) : 0;
 
     return (
         <Dialog
