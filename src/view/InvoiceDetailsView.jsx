@@ -143,7 +143,7 @@ export default function InvoiceDetailsView() {
         } catch (err) {
             console.error("Stornó hiba:", err);
             setConfirmOpen(false);
-            setStornoError("Hiba történt a stornó során. Kérjük, próbálja újra.");
+            setStornoError("Hiba történt a sztornó során. Kérjük, próbálja újra.");
         }
     };
 
