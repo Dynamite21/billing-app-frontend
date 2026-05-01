@@ -196,7 +196,7 @@ export default function InvoiceList() {
 
         load();
         return () => { cancelled = true; };
-    }, [page, rowsPerPage, sortOption, filters, amountRange]);
+    }, [page, rowsPerPage, sortOption, sortBy, sortDir, filters, amountRange, amountFilterActive]);
 
     const setFilterField = (field, value) => {
         setFilters((prev) => ({ ...prev, [field]: value }));
